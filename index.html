@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Asa's Studio — Discord & Telegram Bot Developer</title>
+<meta name="description" content="Portfolio, resume and custom Discord bot commissions by Asa. Crypto payments only.">
+<meta name="theme-color" content="#1e1f22">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='30' fill='%235865F2'/><text x='50' y='68' font-size='56' text-anchor='middle' fill='white' font-family='sans-serif' font-weight='800'>A</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --rail:#1e1f22; --side:#2b2d31; --bg:#313338; --card:#2b2d31; --hover:#35373c; --input:#1e1f22;
+  --text:#dbdee1; --head:#f2f3f5; --muted:#949ba4; --line:#3f4147;
+  --blurple:#5865F2; --blurple-d:#4752c4; --green:#23a55a; --yellow:#f0b232; --red:#f23f43; --pink:#eb459e; --fuchsia:#d83cb6;
+  --font:'Plus Jakarta Sans',system-ui,-apple-system,'Segoe UI',sans-serif; --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--rail);color:var(--text);font-family:var(--font);font-size:16px;line-height:1.55;overflow:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+:focus-visible{outline:2px solid #00a8fc;outline-offset:2px;border-radius:6px}
+::selection{background:var(--blurple);color:#fff}
+::-webkit-scrollbar{width:10px;height:10px}::-webkit-scrollbar-thumb{background:#1a1b1e;border-radius:10px;border:2px solid var(--bg)}::-webkit-scrollbar-track{background:transparent}
+
+.app{display:grid;grid-template-columns:72px 248px 1fr;height:100vh;height:100dvh}
+
+/* ---------- server rail ---------- */
+.rail{background:var(--rail);display:flex;flex-direction:column;align-items:center;gap:8px;padding:12px 0;overflow-y:auto;scrollbar-width:none}
+.rail::-webkit-scrollbar{display:none}
+.srv{position:relative;width:48px;height:48px;border-radius:50%;background:var(--bg);display:grid;place-items:center;transition:border-radius .2s,background .2s,transform .2s;flex:none}
+.srv img{width:26px;height:26px;transition:transform .25s}
+.srv:hover{border-radius:16px;background:var(--c,var(--blurple));transform:translateY(-1px)}
+.srv:hover img{transform:scale(1.12) rotate(-6deg);filter:brightness(0) invert(1)}
+.srv::before{content:"";position:absolute;left:-12px;top:50%;width:4px;height:8px;border-radius:0 4px 4px 0;background:#fff;transform:translateY(-50%) scaleY(0);transition:.2s}
+.srv:hover::before{transform:translateY(-50%) scaleY(1)}
+.srv.active{border-radius:16px;background:var(--blurple)}
+.srv.active::before{height:40px;transform:translateY(-50%) scaleY(1)}
+.srv.active img{filter:brightness(0) invert(1)}
+.srv .tip{position:absolute;left:64px;white-space:nowrap;background:#111214;color:var(--head);font-size:14px;font-weight:600;padding:6px 10px;border-radius:6px;opacity:0;pointer-events:none;transform:translateX(-6px);transition:.15s;z-index:50}
+.srv:hover .tip{opacity:1;transform:none}
+.sep{width:32px;height:2px;border-radius:2px;background:var(--line);flex:none}
+
+/* ---------- channel list ---------- */
+.side{background:var(--side);display:flex;flex-direction:column;min-width:0;border-top-left-radius:0}
+.side-head{height:48px;padding:0 16px;display:flex;align-items:center;justify-content:space-between;font-weight:800;color:var(--head);box-shadow:0 1px 0 rgba(0,0,0,.25);flex:none}
+.side-head svg{width:16px;height:16px;fill:var(--muted)}
+.banner{height:84px;flex:none;background:linear-gradient(120deg,#5865F2,#8c5cf5 45%,#eb459e);background-size:200% 200%;animation:flow 9s ease-in-out infinite;position:relative;overflow:hidden}
+.banner::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 20% 120%,rgba(255,255,255,.28),transparent 55%)}
+.banner span{position:absolute;left:16px;bottom:10px;z-index:1;font-weight:700;font-size:13px;color:#fff;display:flex;align-items:center;gap:8px}
+.live{width:8px;height:8px;border-radius:50%;background:#43e17d;box-shadow:0 0 0 0 rgba(67,225,125,.7);animation:pulse 2s infinite}
+@keyframes flow{50%{background-position:100% 50%}}
+@keyframes pulse{70%{box-shadow:0 0 0 8px rgba(67,225,125,0)}100%{box-shadow:0 0 0 0 rgba(67,225,125,0)}}
+.chans{flex:1;overflow-y:auto;padding:12px 8px}
+.cat{display:flex;align-items:center;gap:4px;padding:16px 8px 4px;font-size:12px;font-weight:700;letter-spacing:.02em;color:var(--muted)}
+.cat:first-child{padding-top:4px}
+.cat svg{width:10px;height:10px;fill:currentColor}
+.ch{display:flex;align-items:center;gap:8px;width:100%;padding:6px 8px;border-radius:6px;color:var(--muted);font-weight:600;font-size:15px;text-align:left;position:relative;transition:background .15s,color .15s}
+.ch .hash{width:20px;text-align:center;font-size:20px;line-height:1;color:#80848e;font-weight:500}
+.ch:hover{background:var(--hover);color:var(--text)}
+.ch.active{background:#404249;color:var(--head)}
+.ch.active .hash{color:var(--head)}
+.ch .badge{margin-left:auto;font-size:10px;font-weight:800;padding:2px 6px;border-radius:8px;background:var(--red);color:#fff}
+.ch .badge.soon{background:var(--yellow);color:#1e1f22}
+.ch .badge.new{background:var(--green)}
+.ch.locked .hash::after{content:"";}
+.user{height:56px;flex:none;background:#232428;display:flex;align-items:center;gap:8px;padding:0 8px}
+.user .av{width:32px;height:32px}
+.user .who{line-height:1.2;min-width:0;flex:1}
+.user .who b{display:block;font-size:14px;color:var(--head);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user .who small{font-size:12px;color:var(--muted)}
+.user .ic{display:flex;gap:2px}
+.user .ic i{width:30px;height:30px;border-radius:6px;display:grid;place-items:center;color:var(--muted)}
+.user .ic i:hover{background:var(--hover);color:var(--text)}
+.user svg{width:18px;height:18px;fill:currentColor}
+
+/* ---------- main ---------- */
+.main{background:var(--bg);display:flex;flex-direction:column;min-width:0;border-top-left-radius:8px;overflow:hidden}
+.top{height:48px;flex:none;display:flex;align-items:center;gap:12px;padding:0 16px;box-shadow:0 1px 0 rgba(0,0,0,.25);z-index:5}
+.top .hash{font-size:24px;color:#80848e;font-weight:500}
+.top h1{font-size:16px;font-weight:800;color:var(--head)}
+.top .div{width:1px;height:24px;background:var(--line)}
+.top .topic{font-size:14px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.burger{display:none;width:36px;height:36px;border-radius:8px;place-items:center}
+.burger svg{width:22px;height:22px;fill:var(--text)}
+.top .gh{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;background:var(--blurple);color:#fff;padding:6px 12px;border-radius:6px;transition:background .15s,transform .15s;white-space:nowrap}
+.top .gh:hover{background:var(--blurple-d);transform:translateY(-1px)}
+.top .gh img{width:16px;height:16px;filter:brightness(0) invert(1)}
+.scroll{flex:1;overflow-y:auto;scroll-behavior:smooth}
+.chan{display:none;max-width:980px;margin:0 auto;padding:24px 16px 120px}
+.chan.show{display:block}
+.chan.show .msg,.chan.show .reveal{animation:rise .5s cubic-bezier(.2,.7,.2,1) backwards;animation-delay:calc(var(--i,0)*80ms)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}}
+
+/* ---------- messages ---------- */
+.intro{padding:16px 0 20px;border-bottom:1px solid var(--line);margin-bottom:12px}
+.intro .big{width:68px;height:68px;border-radius:50%;background:#41434a;display:grid;place-items:center;font-size:40px;color:var(--head);margin-bottom:8px}
+.intro h2{font-size:32px;font-weight:800;color:var(--head);letter-spacing:-.01em}
+.intro p{color:var(--muted);margin-top:4px}
+.msg{display:flex;gap:16px;padding:8px 0;position:relative;border-radius:6px}
+.msg:hover{background:rgba(2,2,2,.06)}
+.av{width:40px;height:40px;border-radius:50%;flex:none;background:linear-gradient(135deg,#5865F2,#eb459e);display:grid;place-items:center;font-weight:800;color:#fff;font-size:17px;position:relative}
+.av.bot{background:#5865F2}
+.av.bot img{width:22px;height:22px;filter:brightness(0) invert(1)}
+.av .st{position:absolute;right:-2px;bottom:-2px;width:14px;height:14px;border-radius:50%;background:var(--green);border:3px solid var(--bg)}
+.user .av .st{border-color:#232428}
+.body{min-width:0;flex:1}
+.head{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:2px}
+.name{font-weight:700;color:var(--head)}
+.name.owner{color:#f47fff}
+.name.botc{color:#7983f5}
+.tag{display:inline-flex;align-items:center;gap:3px;background:var(--blurple);color:#fff;font-size:10px;font-weight:800;padding:1px 5px;border-radius:4px;letter-spacing:.02em;line-height:1.5}
+.time{font-size:12px;color:var(--muted)}
+.body p{margin:2px 0}
+.body p b{color:var(--head)}
+.mention{background:rgba(88,101,242,.3);color:#c9cdfb;padding:0 3px;border-radius:3px;font-weight:600;cursor:pointer;transition:.15s}
+.mention:hover{background:var(--blurple);color:#fff}
+code.i{font-family:var(--mono);font-size:.88em;background:#1e1f22;padding:2px 6px;border-radius:4px}
+.react{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.react span{display:inline-flex;gap:6px;align-items:center;background:#2b2d31;border:1px solid transparent;border-radius:8px;padding:2px 8px;font-size:14px;color:var(--muted);font-weight:600;cursor:pointer;transition:.15s}
+.react span:hover{border-color:var(--muted)}
+.react span.on{background:rgba(88,101,242,.25);border-color:var(--blurple);color:#c9cdfb}
+
+/* ---------- embeds ---------- */
+.embed{background:var(--card);border-left:4px solid var(--ec,var(--blurple));border-radius:4px;padding:12px 16px 16px;margin-top:6px;max-width:560px;display:grid;gap:8px}
+.embed.wide{max-width:none}
+.embed .eh{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:700;color:var(--head)}
+.embed .eh img{width:20px;height:20px}
+.embed h3{font-size:17px;font-weight:700;color:#00a8fc}
+.embed .ed{font-size:14.5px;color:var(--text)}
+.embed .foot{font-size:12px;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-top:8px}
+.grid .embed{max-width:none;transition:transform .2s,background .2s}
+.grid .embed:hover{transform:translateY(-3px);background:#2f3136}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.fields b{display:block;font-size:13px;color:var(--head)}
+.fields span{font-size:14px;color:var(--text)}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px;background:#1e1f22;color:var(--text);display:inline-flex;align-items:center;gap:6px}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--pc,var(--green))}
+.btns{display:flex;flex-wrap:wrap;gap:8px;margin-top:6px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:4px;font-weight:600;font-size:14px;background:#4e5058;color:#fff;transition:background .15s,transform .15s}
+.btn:hover{background:#6d6f78;transform:translateY(-1px)}
+.btn.pri{background:var(--blurple)}.btn.pri:hover{background:var(--blurple-d)}
+.btn.ok{background:var(--green)}.btn.ok:hover{background:#1a8a4a}
+.btn img{width:16px;height:16px;filter:brightness(0) invert(1)}
+.btn[disabled]{opacity:.5;cursor:not-allowed;transform:none}
+.code{background:#1e1f22;border-radius:6px;padding:14px 16px;font-family:var(--mono);font-size:13px;line-height:1.7;overflow-x:auto;color:#c9cdfb;margin-top:6px;max-width:560px;border:1px solid #2b2d31}
+.code .k{color:#c678dd}.code .s{color:#98c379}.code .f{color:#61afef}.code .c{color:#6b7280}.code .n{color:#e5c07b}
+.caret{display:inline-block;width:8px;height:15px;background:#c9cdfb;vertical-align:-2px;animation:blink 1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.typing{display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600;color:var(--muted);padding:6px 0 0 56px}
+.typing .d{display:flex;gap:3px}.typing .d i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:bounce 1.2s infinite}
+.typing .d i:nth-child(2){animation-delay:.15s}.typing .d i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{30%{transform:translateY(-4px);opacity:1}0%,60%,100%{opacity:.5}}
+
+/* timeline */
+.tl{display:grid;gap:14px;margin-top:6px}
+.tl div{position:relative;padding-left:20px}
+.tl div::before{content:"";position:absolute;left:0;top:7px;width:9px;height:9px;border-radius:50%;background:var(--blurple);box-shadow:0 0 0 4px rgba(88,101,242,.2)}
+.tl div::after{content:"";position:absolute;left:4px;top:20px;bottom:-16px;width:1px;background:var(--line)}
+.tl div:last-child::after{display:none}
+.tl b{color:var(--head);font-size:14.5px;display:block}
+.tl span{font-size:13.5px;color:var(--muted)}
+
+/* skills */
+.skill{display:flex;gap:12px;align-items:flex-start}
+.skill .ico{width:44px;height:44px;border-radius:12px;background:#1e1f22;display:grid;place-items:center;flex:none;transition:transform .25s}
+.skill:hover .ico{transform:rotate(-8deg) scale(1.08)}
+.skill .ico img{width:26px;height:26px}
+.skill b{color:var(--head);display:block}
+.skill span{font-size:13.5px;color:var(--muted)}
+.meter{display:flex;gap:3px;margin-top:6px}.meter i{width:22px;height:5px;border-radius:3px;background:#3f4147}.meter i.f{background:var(--mc,var(--blurple))}
+
+/* projects */
+.proj .shot{height:110px;border-radius:6px;margin-bottom:4px;display:grid;place-items:center;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--g1),var(--g2))}
+.proj .shot img{width:46px;height:46px;filter:brightness(0) invert(1) drop-shadow(0 4px 10px rgba(0,0,0,.35));transition:transform .4s}
+.proj:hover .shot img{transform:scale(1.18) rotate(-8deg)}
+.proj .shot::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 80% 0,rgba(255,255,255,.3),transparent 55%)}
+
+/* slash form */
+.slash{background:var(--card);border-radius:8px;padding:6px;max-width:640px;margin-top:8px;border:1px solid #1e1f22}
+.slash .cmd{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:14px;color:var(--head)}
+.slash .cmd em{font-style:normal;background:rgba(88,101,242,.3);color:#c9cdfb;padding:2px 8px;border-radius:4px}
+.slash form{padding:14px 12px;display:grid;gap:14px}
+.f label{display:block;font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.f input,.f select,.f textarea{width:100%;background:var(--input);border:1px solid transparent;border-radius:4px;color:var(--head);padding:10px 12px;font:inherit;font-size:14.5px;transition:border-color .15s}
+.f textarea{min-height:110px;resize:vertical}
+.f input:focus,.f select:focus,.f textarea:focus{outline:0;border-color:var(--blurple)}
+.f input::placeholder,.f textarea::placeholder{color:#6d6f78}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.locked-note{display:flex;gap:12px;align-items:center;background:rgba(240,178,50,.1);border:1px solid rgba(240,178,50,.35);border-radius:8px;padding:14px 16px;max-width:640px;margin-top:10px}
+.locked-note svg{width:26px;height:26px;fill:var(--yellow);flex:none}
+
+/* coins */
+.coin{display:flex;gap:12px;align-items:center}
+.coin .ico{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;background:var(--cc);flex:none}
+.coin .ico img{width:22px;height:22px;filter:brightness(0) invert(1)}
+.coin b{color:var(--head);display:block}.coin span{font-size:13px;color:var(--muted)}
+.steps{display:grid;gap:10px;counter-reset:s;margin-top:4px}
+.steps div{display:flex;gap:12px;align-items:flex-start}
+.steps div::before{counter-increment:s;content:counter(s);width:24px;height:24px;border-radius:50%;background:var(--blurple);color:#fff;font-weight:800;font-size:12px;display:grid;place-items:center;flex:none;margin-top:1px}
+.steps b{color:var(--head)}
+
+.link-row{display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:8px;background:#1e1f22;transition:background .15s,transform .15s}
+.link-row:hover{background:#25272b;transform:translateX(4px)}
+.link-row .ico{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:var(--lc,var(--blurple));flex:none}
+.link-row .ico img{width:22px;height:22px;filter:brightness(0) invert(1)}
+.link-row b{color:var(--head);display:block;font-size:15px}.link-row span{font-size:13px;color:var(--muted)}
+.link-row .go{margin-left:auto;color:var(--muted);font-size:20px}
+
+.chatbar{position:absolute;left:0;right:0;bottom:0;padding:0 16px 22px;pointer-events:none;background:linear-gradient(transparent,var(--bg) 55%)}
+.chatbar div{max-width:948px;margin:0 auto;background:#383a40;border-radius:8px;padding:11px 16px;color:#80848e;font-size:15px;display:flex;align-items:center;gap:12px;pointer-events:auto}
+.chatbar div b{width:24px;height:24px;border-radius:50%;background:#b5bac1;color:#383a40;display:grid;place-items:center;font-size:18px;line-height:1}
+.mainwrap{position:relative;flex:1;min-height:0;display:flex;flex-direction:column}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,40px);background:#111214;color:var(--head);padding:12px 18px;border-radius:8px;font-weight:600;font-size:14px;opacity:0;pointer-events:none;transition:.3s;z-index:99;display:flex;gap:10px;align-items:center;border:1px solid #2b2d31}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast i{width:8px;height:8px;border-radius:50%;background:var(--green)}
+.scrim{display:none}
+
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .rail{position:fixed;left:0;top:0;bottom:0;z-index:30;transform:translateX(-100%);transition:transform .25s}
+  .side{position:fixed;left:72px;top:0;bottom:0;width:260px;z-index:30;transform:translateX(-340px);transition:transform .25s}
+  body.nav .rail,body.nav .side{transform:none}
+  .scrim{display:block;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:20;opacity:0;pointer-events:none;transition:.25s}
+  body.nav .scrim{opacity:1;pointer-events:auto}
+  .burger{display:grid}
+  .main{border-radius:0}
+  .top .topic,.top .div{display:none}
+  .two{grid-template-columns:1fr}
+  .msg{gap:12px}.av{width:36px;height:36px}
+  .intro h2{font-size:26px}
+  .chan{padding-bottom:100px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- ================= SERVER RAIL ================= -->
+<nav class="rail" aria-label="Servers">
+  <a class="srv active" href="#welcome" data-go="welcome" style="--c:#5865F2"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="Home"><span class="tip">Asa's Studio</span></a>
+  <div class="sep"></div>
+  <a class="srv" href="#skills" data-go="skills" style="--c:#3776AB"><img src="https://cdn.simpleicons.org/python/3776AB" alt="Python"><span class="tip">Python</span></a>
+  <a class="srv" href="#skills" data-go="skills" style="--c:#c9a800"><img src="https://cdn.simpleicons.org/javascript/F7DF1E" alt="JavaScript"><span class="tip">JavaScript</span></a>
+  <a class="srv" href="#projects" data-go="projects" style="--c:#7289da"><img src="https://cdn.simpleicons.org/discorddotjs/5865F2" alt="Discord bots"><span class="tip">Discord Bots</span></a>
+  <a class="srv" href="#telegram" data-go="telegram" style="--c:#26A5E4"><img src="https://cdn.simpleicons.org/telegram/26A5E4" alt="Telegram bots"><span class="tip">Telegram Bots · soon</span></a>
+  <div class="sep"></div>
+  <a class="srv" data-link="github" target="_blank" rel="noopener" style="--c:#24292f"><img src="https://cdn.simpleicons.org/github/ffffff" alt="GitHub"><span class="tip">GitHub</span></a>
+</nav>
+
+<!-- ================= CHANNEL LIST ================= -->
+<aside class="side" aria-label="Channels">
+  <div class="side-head">Asa's Studio <svg viewBox="0 0 24 24"><path d="M7 10l5 5 5-5z"/></svg></div>
+  <div class="banner"><span><i class="live"></i>Open for commissions</span></div>
+  <div class="chans">
+    <div class="cat"><svg viewBox="0 0 12 12"><path d="M2 4l4 4 4-4z"/></svg>INFORMATION</div>
+    <button class="ch active" data-ch="welcome"><span class="hash">#</span>welcome</button>
+    <button class="ch" data-ch="about"><span class="hash">#</span>about-and-resume</button>
+    <button class="ch" data-ch="skills"><span class="hash">#</span>skills</button>
+    <div class="cat"><svg viewBox="0 0 12 12"><path d="M2 4l4 4 4-4z"/></svg>PORTFOLIO</div>
+    <button class="ch" data-ch="projects"><span class="hash">#</span>projects</button>
+    <div class="cat"><svg viewBox="0 0 12 12"><path d="M2 4l4 4 4-4z"/></svg>COMMISSIONS</div>
+    <button class="ch" data-ch="discord"><span class="hash">#</span>order-discord-bot<span class="badge new">OPEN</span></button>
+    <button class="ch" data-ch="telegram"><span class="hash">#</span>order-telegram-bot<span class="badge soon">SOON</span></button>
+    <button class="ch" data-ch="payment"><span class="hash">#</span>payment-methods</button>
+    <div class="cat"><svg viewBox="0 0 12 12"><path d="M2 4l4 4 4-4z"/></svg>CONNECT</div>
+    <button class="ch" data-ch="contact"><span class="hash">#</span>contact-links</button>
+  </div>
+  <div class="user">
+    <div class="av">A<i class="st"></i></div>
+    <div class="who"><b>Asa</b><small>Online · Building bots</small></div>
+    <div class="ic">
+      <i><svg viewBox="0 0 24 24"><path d="M12 14a3 3 0 003-3V5a3 3 0 10-6 0v6a3 3 0 003 3zm5-3a5 5 0 01-10 0H5a7 7 0 006 6.92V21h2v-3.08A7 7 0 0019 11h-2z"/></svg></i>
+      <i><svg viewBox="0 0 24 24"><path d="M12 15.5A3.5 3.5 0 1112 8.5a3.5 3.5 0 010 7zm7.4-2.5a7.6 7.6 0 000-2l2.1-1.6-2-3.5-2.5 1a7.5 7.5 0 00-1.7-1L15 3h-4l-.4 2.9c-.6.2-1.2.6-1.7 1l-2.5-1-2 3.5L6.6 11a7.6 7.6 0 000 2l-2.1 1.6 2 3.5 2.5-1c.5.4 1.100.8 1.700 1L11 21h4l.4-2.900c.6-.2 1.200-.6 1.700-1l2.500 1 2-3.500z"/></svg></i>
+    </div>
+  </div>
+</aside>
+
+<!-- ================= MAIN ================= -->
+<main class="main">
+  <header class="top">
+    <button class="burger" id="burger" aria-label="Open navigation"><svg viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg></button>
+    <span class="hash">#</span><h1 id="title">welcome</h1><span class="div"></span><span class="topic" id="topic"></span>
+    <a class="gh" data-link="github" target="_blank" rel="noopener"><img src="https://cdn.simpleicons.org/github/ffffff" alt="">GitHub</a>
+  </header>
+
+  <div class="mainwrap">
+  <div class="scroll" id="scroll">
+
+  <!-- ===== WELCOME ===== -->
+  <section class="chan show" id="welcome" data-topic="Start here. Bots, code and custom commissions.">
+    <div class="intro">
+      <div class="big">#</div>
+      <h2>Welcome to Asa's Studio!</h2>
+      <p>This is the start of the #welcome channel. Everything you need is one click away in the sidebar.</p>
+    </div>
+    <div class="msg" style="--i:1">
+      <div class="av">A<i class="st"></i></div>
+      <div class="body">
+        <div class="head"><span class="name owner">Asa</span><span class="tag">OWNER</span><span class="time">Today at 12:00</span></div>
+        <p>Hey, I'm <b>Asa</b>. I build <b>custom Discord bots</b> in Python and I'm taking <span class="mention" data-go="discord">#order-discord-bot</span> commissions right now. Telegram bots are on the way.</p>
+        <div class="embed" style="--ec:#5865F2">
+          <div class="eh"><img src="https://cdn.simpleicons.org/discord/5865F2" alt="">What I can build for you</div>
+          <div class="ed">Moderation, tickets, welcome systems, leveling, music-free utility bots, dashboards, logging, giveaways and fully custom slash-command bots designed around your server.</div>
+          <div class="pills"><span class="pill"><i></i>Slash commands</span><span class="pill"><i></i>Embeds &amp; buttons</span><span class="pill"><i></i>Cogs / clean code</span><span class="pill"><i></i>Hosting help</span></div>
+          <div class="btns">
+            <button class="btn pri" data-go="discord"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="">Order a Discord bot</button>
+            <button class="btn" data-go="projects">View projects</button>
+          </div>
+        </div>
+        <div class="react"><span class="on">🔥 12</span><span>💜 8</span><span>🤖 21</span></div>
+      </div>
+    </div>
+    <div class="msg" style="--i:2">
+      <div class="av bot"><img src="https://cdn.simpleicons.org/discorddotjs/ffffff" alt=""></div>
+      <div class="body">
+        <div class="head"><span class="name botc">Discy</span><span class="tag">BOT</span><span class="time">Today at 12:01</span></div>
+        <p>Quick start for new visitors:</p>
+        <div class="code"><span class="c"># how ordering works</span><br><span class="k">async def</span> <span class="f">order</span>(bot_idea):<br>&nbsp;&nbsp;brief &nbsp;= <span class="k">await</span> <span class="f">tell_amir</span>(bot_idea)<br>&nbsp;&nbsp;quote &nbsp;= <span class="k">await</span> <span class="f">get_quote</span>(brief)<br>&nbsp;&nbsp;<span class="k">return</span> <span class="f">pay_in_crypto</span>(quote) <span class="k">and</span> <span class="f">ship</span>()<span class="caret"></span></div>
+      </div>
+    </div>
+    <div class="typing"><span class="d"><i></i><i></i><i></i></span>Asa is working on a new bot…</div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section class="chan" id="about" data-topic="Who I am, where I'm from and what I've done.">
+    <div class="intro"><div class="big">#</div><h2>#about-and-resume</h2><p>The short version of my story.</p></div>
+    <div class="msg" style="--i:1">
+      <div class="av">A<i class="st"></i></div>
+      <div class="body">
+        <div class="head"><span class="name owner">Asa</span><span class="tag">OWNER</span><span class="time">Pinned</span></div>
+        <div class="embed wide" style="--ec:#f47fff">
+          <div class="eh">Profile card</div>
+          <h3>Asa — Python developer &amp; bot builder</h3>
+          <div class="ed">I'm a self-taught developer with a background in branding and graphic design. That mix means I care about how a bot <i>looks</i> and feels in Discord, not only whether it works. I learn by building real projects: bots, security tools, terminal apps and websites.</div>
+          <div class="fields">
+            <div><b>Focus</b><span>Discord bots, Python tooling</span></div>
+            <div><b>Also exploring</b><span>Cybersecurity, front-end, electronics</span></div>
+            <div><b>Languages</b><span>Farsi, English</span></div>
+            <div><b>Availability</b><span>Open for commissions</span></div>
+          </div>
+          <div class="btns"><a class="btn pri" data-link="resume" target="_blank" rel="noopener">Download resume (PDF)</a></div>
+        </div>
+      </div>
+    </div>
+    <div class="msg" style="--i:2">
+      <div class="av bot"><img src="https://cdn.simpleicons.org/discorddotjs/ffffff" alt=""></div>
+      <div class="body">
+        <div class="head"><span class="name botc">Resume</span><span class="tag">BOT</span><span class="time">Timeline</span></div>
+        <div class="embed wide" style="--ec:#23a55a">
+          <div class="eh">Experience &amp; milestones</div>
+          <div class="tl">
+            <div><b>Custom Discord bot developer</b><span>Building slash-command bots with discord.py, cogs, embeds and persistent data.</span></div>
+            <div><b>Python &amp; security tooling</b><span>Port scanner, file integrity checker (hashlib + JSON), terminal finance manager.</span></div>
+            <div><b>Web &amp; front-end</b><span>HTML, CSS and JavaScript. Currently growing toward a front-end developer path.</span></div>
+            <div><b>Branding &amp; graphic design</b><span>Visual identity work that shapes how I design bot interfaces and websites.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SKILLS ===== -->
+  <section class="chan" id="skills" data-topic="The tools I work with every day.">
+    <div class="intro"><div class="big">#</div><h2>#skills</h2><p>Honest levels. Filled bars show how comfortable I am.</p></div>
+    <div class="msg" style="--i:1">
+      <div class="av">A<i class="st"></i></div>
+      <div class="body">
+        <div class="head"><span class="name owner">Asa</span><span class="tag">OWNER</span><span class="time">Today at 12:10</span></div>
+        <p>This is my current stack. Hover an icon, they like attention.</p>
+        <div class="grid">
+          <div class="embed skill" style="--ec:#3776AB"><div class="ico"><img src="https://cdn.simpleicons.org/python/3776AB" alt="Python"></div><div><b>Python</b><span>Bots, CLI tools, security scripts</span><div class="meter" style="--mc:#3776AB"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></div></div></div>
+          <div class="embed skill" style="--ec:#5865F2"><div class="ico"><img src="https://cdn.simpleicons.org/discorddotjs/5865F2" alt="discord.py"></div><div><b>discord.py</b><span>Slash commands, cogs, views, embeds</span><div class="meter"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></div></div></div>
+          <div class="embed skill" style="--ec:#F7DF1E"><div class="ico"><img src="https://cdn.simpleicons.org/javascript/F7DF1E" alt="JavaScript"></div><div><b>JavaScript</b><span>DOM, interactivity, front-end logic</span><div class="meter" style="--mc:#F7DF1E"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div></div></div>
+          <div class="embed skill" style="--ec:#E34F26"><div class="ico"><img src="https://cdn.simpleicons.org/html5/E34F26" alt="HTML"></div><div><b>HTML &amp; CSS</b><span>Responsive layouts, animation</span><div class="meter" style="--mc:#E34F26"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div></div></div>
+          <div class="embed skill" style="--ec:#26A5E4"><div class="ico"><img src="https://cdn.simpleicons.org/telegram/26A5E4" alt="Telegram"></div><div><b>Telegram bots</b><span>Coming soon to commissions</span><div class="meter" style="--mc:#26A5E4"><i class="f"></i><i class="f"></i><i></i><i></i><i></i></div></div></div>
+          <div class="embed skill" style="--ec:#F05032"><div class="ico"><img src="https://cdn.simpleicons.org/git/F05032" alt="Git"></div><div><b>Git &amp; GitHub</b><span>Version control, GitHub Pages</span><div class="meter" style="--mc:#F05032"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div></div></div>
+          <div class="embed skill" style="--ec:#FCC624"><div class="ico"><img src="https://cdn.simpleicons.org/linux/FCC624" alt="Linux"></div><div><b>Linux</b><span>Daily driver, terminal workflow</span><div class="meter" style="--mc:#FCC624"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div></div></div>
+          <div class="embed skill" style="--ec:#eb459e"><div class="ico"><img src="https://cdn.simpleicons.org/figma/F24E1E" alt="Design"></div><div><b>Branding &amp; UI design</b><span>Identity, layout, visual polish</span><div class="meter" style="--mc:#eb459e"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i></i></div></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PROJECTS ===== -->
+  <section class="chan" id="projects" data-topic="Selected work. Click any card to see the code.">
+    <div class="intro"><div class="big">#</div><h2>#projects</h2><p>Real things I've built and shipped.</p></div>
+    <div class="msg" style="--i:1">
+      <div class="av bot"><img src="https://cdn.simpleicons.org/github/ffffff" alt=""></div>
+      <div class="body">
+        <div class="head"><span class="name botc">Showcase</span><span class="tag">BOT</span><span class="time">Today at 12:20</span></div>
+        <div class="grid">
+          <a class="embed proj" data-link="proj1" target="_blank" rel="noopener" style="--ec:#5865F2"><div class="shot" style="--g1:#5865F2;--g2:#8c5cf5"><img src="https://cdn.simpleicons.org/discorddotjs/ffffff" alt=""></div><h3>Discy</h3><div class="ed">A community Discord bot with slash commands, embeds and cog-based architecture.</div><div class="pills"><span class="pill"><i style="--pc:#3776AB"></i>Python</span><span class="pill"><i></i>discord.py</span></div><div class="foot">View on GitHub</div></a>
+          <a class="embed proj" data-link="proj2" target="_blank" rel="noopener" style="--ec:#23a55a"><div class="shot" style="--g1:#134e2a;--g2:#23a55a"><img src="https://cdn.simpleicons.org/gnubash/ffffff" alt=""></div><h3>Terminal Finance Manager</h3><div class="ed">A keyboard-driven personal finance app that runs entirely in the Linux terminal.</div><div class="pills"><span class="pill"><i style="--pc:#3776AB"></i>Python</span><span class="pill"><i style="--pc:#FCC624"></i>TUI</span></div><div class="foot">View on GitHub</div></a>
+          <a class="embed proj" data-link="proj3" target="_blank" rel="noopener" style="--ec:#f23f43"><div class="shot" style="--g1:#5c1517;--g2:#f23f43"><img src="https://cdn.simpleicons.org/hackthebox/ffffff" alt=""></div><h3>File Integrity Checker</h3><div class="ed">Detects changed files using SHA-256 hashes stored in JSON. Built with OOP.</div><div class="pills"><span class="pill"><i style="--pc:#3776AB"></i>Python</span><span class="pill"><i style="--pc:#f23f43"></i>Security</span></div><div class="foot">View on GitHub</div></a>
+          <a class="embed proj" data-link="proj4" target="_blank" rel="noopener" style="--ec:#f0b232"><div class="shot" style="--g1:#6b4a0a;--g2:#f0b232"><img src="https://cdn.simpleicons.org/wireshark/ffffff" alt=""></div><h3>Port Scanner</h3><div class="ed">A fast multi-threaded TCP port scanner for learning network fundamentals.</div><div class="pills"><span class="pill"><i style="--pc:#3776AB"></i>Python</span><span class="pill"><i style="--pc:#f0b232"></i>Networking</span></div><div class="foot">View on GitHub</div></a>
+          <a class="embed proj" data-link="proj5" target="_blank" rel="noopener" style="--ec:#eb459e"><div class="shot" style="--g1:#4b1a7a;--g2:#eb459e"><img src="https://cdn.simpleicons.org/html5/ffffff" alt=""></div><h3>This website</h3><div class="ed">The site you're on. Pure HTML, CSS and JavaScript on GitHub Pages. No backend.</div><div class="pills"><span class="pill"><i style="--pc:#E34F26"></i>HTML</span><span class="pill"><i style="--pc:#F7DF1E"></i>JavaScript</span></div><div class="foot">View on GitHub</div></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ORDER DISCORD ===== -->
+  <section class="chan" id="discord" data-topic="Describe your bot. I'll reply with a quote.">
+    <div class="intro"><div class="big">#</div><h2>#order-discord-bot</h2><p>Use the command below to prepare your order message.</p></div>
+    <div class="msg" style="--i:1">
+      <div class="av">A<i class="st"></i></div>
+      <div class="body">
+        <div class="head"><span class="name owner">Asa</span><span class="tag">OWNER</span><span class="time">Today at 12:30</span></div>
+        <p>Fill in the form, press <b>Copy order</b>, then send it to me on Discord. No account needed on this site.</p>
+        <div class="slash">
+          <div class="cmd"><em>/order-bot</em> type features budget contact</div>
+          <form id="orderForm" onsubmit="return false">
+            <div class="two">
+              <div class="f"><label for="o-type">BOT TYPE</label><select id="o-type"><option>Moderation bot</option><option>Ticket support bot</option><option>Welcome &amp; roles bot</option><option>Leveling / economy bot</option><option>Logging bot</option><option>Fully custom bot</option></select></div>
+              <div class="f"><label for="o-coin">PAYMENT COIN</label><select id="o-coin"><option>USDT (TRC-20)</option><option>TON</option><option>BTC</option><option>ETH</option><option>Other (let's talk)</option></select></div>
+            </div>
+            <div class="f"><label for="o-feat">WHAT SHOULD IT DO?</label><textarea id="o-feat" placeholder="Describe commands, buttons, embeds, roles, channels, anything that matters to your server."></textarea></div>
+            <div class="two">
+              <div class="f"><label for="o-name">YOUR DISCORD USERNAME</label><input id="o-name" placeholder="yourname"></div>
+              <div class="f"><label for="o-dead">DEADLINE (OPTIONAL)</label><input id="o-dead" placeholder="e.g. within 2 weeks"></div>
+            </div>
+            <div class="btns"><button type="button" class="btn ok" id="copyOrder">Copy order</button><a class="btn pri" data-link="discordDM" target="_blank" rel="noopener"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="">Open my Discord</a></div>
+          </form>
+        </div>
+        <div class="embed" style="--ec:#23a55a;margin-top:12px"><div class="eh">What you get</div><div class="ed">Clean Python source, setup guide, slash commands with embeds, and help hosting it. Pricing is quoted per project and paid in crypto.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ORDER TELEGRAM ===== -->
+  <section class="chan" id="telegram" data-topic="Custom Telegram bots. Launching soon.">
+    <div class="intro"><div class="big">#</div><h2>#order-telegram-bot</h2><p>This channel is read-only until launch.</p></div>
+    <div class="msg" style="--i:1">
+      <div class="av bot" style="background:#26A5E4"><img src="https://cdn.simpleicons.org/telegram/ffffff" alt=""></div>
+      <div class="body">
+        <div class="head"><span class="name" style="color:#4cc2f5">Telegram Desk</span><span class="tag" style="background:#26A5E4">SOON</span><span class="time">Today at 12:40</span></div>
+        <div class="embed" style="--ec:#26A5E4">
+          <div class="eh"><img src="https://cdn.simpleicons.org/telegram/26A5E4" alt="">Custom Telegram bots</div>
+          <div class="ed">Inline keyboards, channel tools, group management, notifications and automation. Orders open soon.</div>
+          <div class="pills"><span class="pill"><i style="--pc:#f0b232"></i>Coming soon</span><span class="pill"><i style="--pc:#26A5E4"></i>Crypto only</span></div>
+        </div>
+        <div class="locked-note"><svg viewBox="0 0 24 24"><path d="M12 2a5 5 0 00-5 5v3H6a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2v-8a2 2 0 00-2-2h-1V7a5 5 0 00-5-5zm-3 8V7a3 3 0 116 0v3z"/></svg><div><b style="color:var(--head)">Orders are locked.</b><br><span style="font-size:14px;color:var(--muted)">Need one urgently? Message me on Discord and I'll tell you the timeline.</span></div></div>
+        <div class="btns"><button class="btn" disabled>Order Telegram bot · coming soon</button><a class="btn pri" data-link="discordDM" target="_blank" rel="noopener"><img src="https://cdn.simpleicons.org/discord/ffffff" alt="">Ask on Discord</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== PAYMENT ===== -->
+  <section class="chan" id="payment" data-topic="Every order is paid in cryptocurrency. No exceptions.">
+    <div class="intro"><div class="big">#</div><h2>#payment-methods</h2><p>Cryptocurrency only. Fast, borderless and simple.</p></div>
+    <div class="msg" style="--i:1">
+      <div class="av">A<i class="st"></i></div>
+      <div class="body">
+        <div class="head"><span class="name owner">Asa</span><span class="tag">OWNER</span><span class="time">Pinned</span></div>
+        <div class="embed wide" style="--ec:#f0b232">
+          <div class="eh">Payment policy</div>
+          <div class="ed">All commissions are accepted and paid <b>exclusively in cryptocurrency</b>. Bank transfers, cards and PayPal are not available. Crypto lets me work with clients anywhere in the world, with no chargebacks and no middlemen.</div>
+        </div>
+        <div class="grid">
+          <div class="embed coin" style="--ec:#26A17B;--cc:#26A17B"><div class="ico"><img src="https://cdn.simpleicons.org/tether/ffffff" alt=""></div><div><b>USDT</b><span>TRC-20 network · recommended, low fees</span></div></div>
+          <div class="embed coin" style="--ec:#0098EA;--cc:#0098EA"><div class="ico"><img src="https://cdn.simpleicons.org/ton/ffffff" alt=""></div><div><b>TON</b><span>The Open Network</span></div></div>
+          <div class="embed coin" style="--ec:#F7931A;--cc:#F7931A"><div class="ico"><img src="https://cdn.simpleicons.org/bitcoin/ffffff" alt=""></div><div><b>BTC</b><span>Bitcoin mainnet</span></div></div>
+          <div class="embed coin" style="--ec:#627EEA;--cc:#627EEA"><div class="ico"><img src="https://cdn.simpleicons.org/ethereum/ffffff" alt=""></div><div><b>ETH</b><span>Ethereum mainnet</span></div></div>
+        </div>
+        <div class="embed wide" style="--ec:#5865F2;margin-top:12px;max-width:none">
+          <div class="eh">How an order works</div>
+          <div class="steps">
+            <div><span><b>Brief.</b> You send your order message from #order-discord-bot.</span></div>
+            <div><span><b>Quote.</b> I reply with scope, price in your chosen coin and a delivery estimate.</span></div>
+            <div><span><b>Deposit.</b> You pay 50% to the wallet address I send privately in DM.</span></div>
+            <div><span><b>Build.</b> I develop the bot and share progress while I work.</span></div>
+            <div><span><b>Delivery.</b> You review it, pay the remaining 50%, and receive the full source code.</span></div>
+          </div>
+          <div class="foot">Wallet addresses are only ever shared in direct messages. Never trust an address posted anywhere else.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACT ===== -->
+  <section class="chan" id="contact" data-topic="Find me, join the servers, invite the bots.">
+    <div class="intro"><div class="big">#</div><h2>#contact-links</h2><p>Every place you can find me.</p></div>
+    <div class="msg" style="--i:1">
+      <div class="av">A<i class="st"></i></div>
+      <div class="body">
+        <div class="head"><span class="name owner">Asa</span><span class="tag">OWNER</span><span class="time">Pinned</span></div>
+        <div class="grid">
+          <a class="link-row" data-link="github" target="_blank" rel="noopener" style="--lc:#24292f"><div class="ico"><img src="https://cdn.simpleicons.org/github/ffffff" alt=""></div><div><b>GitHub</b><span>Code, projects and this website</span></div><span class="go">›</span></a>
+          <a class="link-row" data-link="server" target="_blank" rel="noopener" style="--lc:#5865F2"><div class="ico"><img src="https://cdn.simpleicons.org/discord/ffffff" alt=""></div><div><b>My Discord server</b><span>Community for programmers</span></div><span class="go">›</span></a>
+          <a class="link-row" data-link="botServer" target="_blank" rel="noopener" style="--lc:#7983f5"><div class="ico"><img src="https://cdn.simpleicons.org/discorddotjs/ffffff" alt=""></div><div><b>Bot support server</b><span>Help, updates and feedback</span></div><span class="go">›</span></a>
+          <a class="link-row" data-link="invite1" target="_blank" rel="noopener" style="--lc:#23a55a"><div class="ico"><img src="https://cdn.simpleicons.org/robotframework/ffffff" alt=""></div><div><b>Invite Discy</b><span>Add my bot to your server</span></div><span class="go">›</span></a>
+          <a class="link-row" data-link="discordDM" target="_blank" rel="noopener" style="--lc:#eb459e"><div class="ico"><img src="https://cdn.simpleicons.org/discord/ffffff" alt=""></div><div><b>Direct message</b><span>Fastest way to start an order</span></div><span class="go">›</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  </div>
+  <div class="chatbar"><div><b>+</b><span id="ph">Message #welcome</span></div></div>
+  </div>
+</main>
+</div>
+<div class="scrim" id="scrim"></div>
+<div class="toast" id="toast" role="status"><i></i><span id="toastMsg"></span></div>
+
+<script>
+/* =====================================================
+   EDIT YOUR LINKS HERE — replace every "#" with a real URL
+   ===================================================== */
+const LINKS = {
+  github:    "https://github.com/GwenAsa",
+  server:    "https://discord.gg/Way3FZSvSc",
+  botServer: "https://discord.gg/QMhkfjDBbM",
+  invite1:   "https://discord.com/oauth2/authorize?client_id=1537617709293117481&permissions=8&integration_type=0&scope=bot",
+  discordDM: "https://discord.com/users/1520091568684662834",
+  resume:    "resume.pdf",
+  proj1:     "https://github.com/GwenAsa?tab=repositories",
+  proj2:     "https://github.com/GwenAsa?tab=repositories",
+  proj3:     "https://github.com/GwenAsa?tab=repositories",
+  proj4:     "https://github.com/GwenAsa?tab=repositories",
+  proj5:     "https://github.com/GwenAsa?tab=repositories"
+};
+
+document.querySelectorAll("[data-link]").forEach(a => { a.href = LINKS[a.dataset.link] || "#"; });
+
+const $ = s => document.querySelector(s), $$ = s => [...document.querySelectorAll(s)];
+function go(id, push = true) {
+  const sec = document.getElementById(id); if (!sec || !sec.classList.contains("chan")) id = "welcome";
+  $$(".chan").forEach(c => c.classList.toggle("show", c.id === id));
+  $$(".ch").forEach(c => c.classList.toggle("active", c.dataset.ch === id));
+  $$(".srv[data-go]").forEach(s => s.classList.toggle("active", s.dataset.go === id || (id === "welcome" && s.dataset.go === "welcome")));
+  const name = $$(".ch").find(c => c.dataset.ch === id).textContent.replace(/#|OPEN|SOON/g, "").trim();
+  $("#title").textContent = name; $("#ph").textContent = "Message #" + name;
+  $("#topic").textContent = document.getElementById(id).dataset.topic;
+  document.title = "#" + name + " · Asa's Studio";
+  $("#scroll").scrollTo({ top: 0, behavior: "instant" });
+  document.getElementById(id).querySelectorAll(".msg,.typing").forEach((m, i) => m.style.setProperty("--i", i + 1));
+  document.body.classList.remove("nav");
+  if (push) history.replaceState(null, "", "#" + id);
+}
+document.addEventListener("click", e => {
+  const t = e.target.closest("[data-ch],[data-go]"); if (!t) return;
+  if (t.tagName === "A" && t.hasAttribute("href")) e.preventDefault();
+  go(t.dataset.ch || t.dataset.go);
+});
+$("#burger").onclick = () => document.body.classList.add("nav");
+$("#scrim").onclick = () => document.body.classList.remove("nav");
+addEventListener("hashchange", () => go(location.hash.slice(1), false));
+go(location.hash.slice(1) || "welcome", false);
+
+let tt; function toast(m) { $("#toastMsg").textContent = m; $("#toast").classList.add("on"); clearTimeout(tt); tt = setTimeout(() => $("#toast").classList.remove("on"), 2600); }
+
+$("#copyOrder").onclick = async () => {
+  const v = id => document.getElementById(id).value.trim();
+  const feat = v("o-feat");
+  if (!feat) { toast("Please describe what the bot should do first."); document.getElementById("o-feat").focus(); return; }
+  const msg = "📩 NEW BOT ORDER\n\nType: " + v("o-type") + "\nPayment: " + v("o-coin") + "\nDiscord: " + (v("o-name") || "-") + "\nDeadline: " + (v("o-dead") || "-") + "\n\nFeatures:\n" + feat;
+  try { await navigator.clipboard.writeText(msg); toast("Order copied. Paste it in my Discord DM."); }
+  catch { const t = document.createElement("textarea"); t.value = msg; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); toast("Order copied. Paste it in my Discord DM."); }
+};
+
+/* reactions toggle */
+$$(".react span").forEach(r => r.addEventListener("click", () => {
+  const n = r.textContent.trim().split(" "), c = +n[1]; const on = r.classList.toggle("on");
+  r.textContent = n[0] + " " + (on ? c + 1 : c - 1);
+}));
+</script>
+</body>
+</html>
